@@ -1,130 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Diminished Value VIN Intake</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Diminished Value Intake + Report Preview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-body { font-family: Arial, sans-serif; background:#f4f6f8; margin:0; padding:20px; }
-.container { max-width:1200px; margin:auto; background:#fff; padding:20px; border-radius:8px; }
-h2 { margin-top:30px; }
-label { display:block; margin-top:12px; font-weight:bold; }
-input { width:100%; padding:8px; margin-top:4px; }
-.row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-.status { margin-top:8px; font-size:13px; }
-.report { margin-top:30px; padding:20px; border:1px solid #ccc; }
-.report h3 { margin-top:0; }
-hr { margin:20px 0; }
+body {
+  font-family: Arial, sans-serif;
+  background:#f3f5f7;
+  margin:0;
+  padding:20px;
+}
+
+.container {
+  max-width:1200px;
+  margin:auto;
+  display:grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap:20px;
+}
+
+.card {
+  background:#fff;
+  border-radius:8px;
+  padding:20px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+h2,h3 {
+  margin-top:0;
+}
+
+input, textarea, select {
+  width:100%;
+  padding:8px;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+label {
+  font-weight:bold;
+  font-size:13px;
+}
+
+.small {
+  font-size:12px;
+  color:#666;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+
+table, th, td {
+  border:1px solid #ccc;
+}
+
+th, td {
+  padding:6px;
+  font-size:12px;
+}
+
+.signature {
+  margin-top:20px;
+}
 </style>
 </head>
 
 <body>
+
+<h2>Diminished Value Intake + Report Preview</h2>
+
 <div class="container">
 
-<h2>Enter Vehicle VIN Number</h2>
-<label>VIN</label>
-<input id="vinInput" maxlength="17" placeholder="Paste 17-character VIN" />
-<div id="vinStatus" class="status"></div>
+<!-- LEFT COLUMN -->
+<div>
 
-<h2>Vehicle Information</h2>
-<div class="row">
-  <div>
-    <label>Year</label>
-    <input id="vehicleYear" />
-  </div>
-  <div>
-    <label>Make</label>
-    <input id="vehicleMake" />
-  </div>
-  <div>
-    <label>Model</label>
-    <input id="vehicleModel" />
-  </div>
-  <div>
-    <label>Trim</label>
-    <input id="vehicleTrim" />
-  </div>
+<!-- VIN SECTION -->
+<div class="card">
+  <h3>Enter Vehicle VIN Number</h3>
+  <input id="vinInput" maxlength="17" placeholder="Enter 17-character VIN">
+  <div id="vinStatus" class="small"></div>
 </div>
 
-<label style="margin-top:15px;">VIN (copied)</label>
-<input id="vehicleVIN" />
+<!-- CASE INTAKE -->
+<div class="card">
+  <h3>Case Intake</h3>
 
-<hr>
+  <label>Client Name</label>
+  <input>
 
-<h2>Report Preview</h2>
-<div class="report">
-  <h3>Vehicle Identification</h3>
-  <p><strong>Year:</strong> <span id="rYear">—</span></p>
-  <p><strong>Make:</strong> <span id="rMake">—</span></p>
-  <p><strong>Model:</strong> <span id="rModel">—</span></p>
-  <p><strong>Trim:</strong> <span id="rTrim">—</span></p>
-  <p><strong>VIN:</strong> <span id="rVIN">—</span></p>
+  <label>Insurance Company</label>
+  <input>
+
+  <label>Claim Number</label>
+  <input>
+
+  <label>Loss Date</label>
+  <input type="date">
+</div>
+
+<!-- VEHICLE INFO -->
+<div class="card">
+  <h3>Vehicle Information</h3>
+
+  <label>Year</label>
+  <input id="vehicleYear">
+
+  <label>Make</label>
+  <input id="vehicleMake">
+
+  <label>Model</label>
+  <input id="vehicleModel">
+
+  <label>Trim</label>
+  <input id="vehicleTrim">
+
+  <label>VIN</label>
+  <input id="vehicleVIN">
+
+  <label>Mileage</label>
+  <input>
+</div>
+
+</div>
+
+<!-- RIGHT COLUMN -->
+<div class="card">
+  <h3>Report Preview</h3>
+
+  <strong>Vehicle Identification</strong>
+  <p>
+    Year: <span id="rYear">—</span><br>
+    Make: <span id="rMake">—</span><br>
+    Model: <span id="rModel">—</span><br>
+    Trim: <span id="rTrim">—</span><br>
+    VIN: <span id="rVIN">—</span>
+  </p>
+
+  <table>
+    <tr><th>Item</th><th>Value</th></tr>
+    <tr><td>Pre-Loss Value</td><td>$0</td></tr>
+    <tr><td>Adjusted DV</td><td>$0</td></tr>
+  </table>
+
+  <div class="signature">
+    <p>Respectfully,</p>
+    <img src="signature.png" style="max-width:220px;">
+    <p><strong>David L. Montanaro</strong><br>
+    Southern Automotive Consultants</p>
+  </div>
 </div>
 
 </div>
 
 <script>
-(() => {
-  const $ = id => document.getElementById(id);
+const vinInput = document.getElementById("vinInput");
+const vinStatus = document.getElementById("vinStatus");
 
-  function setVal(el, val) {
-    if (!el) return;
-    el.value = val || "";
-    el.dispatchEvent(new Event("input", { bubbles:true }));
+const yearF = document.getElementById("vehicleYear");
+const makeF = document.getElementById("vehicleMake");
+const modelF = document.getElementById("vehicleModel");
+const trimF = document.getElementById("vehicleTrim");
+const vinF = document.getElementById("vehicleVIN");
+
+const rYear = document.getElementById("rYear");
+const rMake = document.getElementById("rMake");
+const rModel = document.getElementById("rModel");
+const rTrim = document.getElementById("rTrim");
+const rVIN = document.getElementById("rVIN");
+
+async function decodeVIN(vin) {
+  const res = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${vin}?format=json`);
+  const data = await res.json();
+  const get = n => data.Results.find(r => r.Variable === n)?.Value || "";
+  return {
+    year:get("Model Year"),
+    make:get("Make"),
+    model:get("Model"),
+    trim:get("Trim")
+  };
+}
+
+vinInput.addEventListener("input", async () => {
+  const vin = vinInput.value.toUpperCase().trim();
+  if (vin.length !== 17) {
+    vinStatus.textContent = "Enter full 17-character VIN";
+    return;
   }
 
-  function setText(id, val) {
-    const el = $(id);
-    if (el) el.textContent = val || "—";
-  }
+  vinStatus.textContent = "Decoding VIN…";
 
-  function normalizeVIN(v) {
-    return v.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,17);
-  }
+  const info = await decodeVIN(vin);
 
-  async function decodeVIN(vin) {
-    if (vin.length < 11) {
-      $("vinStatus").textContent = "Enter at least 11 characters.";
-      return;
-    }
+  yearF.value = info.year;
+  makeF.value = info.make;
+  modelF.value = info.model;
+  trimF.value = info.trim;
+  vinF.value = vin;
 
-    $("vinStatus").textContent = "Decoding VIN…";
+  rYear.textContent = info.year;
+  rMake.textContent = info.make;
+  rModel.textContent = info.model;
+  rTrim.textContent = info.trim;
+  rVIN.textContent = vin;
 
-    try {
-      const res = await fetch(
-        `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/${vin}?format=json`
-      );
-      const data = await res.json();
-      const r = data.Results[0];
-
-      setVal($("vehicleVIN"), vin);
-      setVal($("vehicleYear"), r.ModelYear);
-      setVal($("vehicleMake"), r.Make);
-      setVal($("vehicleModel"), r.Model);
-      setVal($("vehicleTrim"), r.Trim || r.Series);
-
-      setText("rVIN", vin);
-      setText("rYear", r.ModelYear);
-      setText("rMake", r.Make);
-      setText("rModel", r.Model);
-      setText("rTrim", r.Trim || r.Series);
-
-      $("vinStatus").textContent = "VIN decoded successfully.";
-    } catch (e) {
-      console.error(e);
-      $("vinStatus").textContent = "VIN decode failed. Check console.";
-    }
-  }
-
-  let timer;
-  $("vinInput").addEventListener("input", e => {
-    const vin = normalizeVIN(e.target.value);
-    e.target.value = vin;
-    setVal($("vehicleVIN"), vin);
-    clearTimeout(timer);
-    timer = setTimeout(() => decodeVIN(vin), 400);
-  });
-})();
+  vinStatus.textContent = "Vehicle information populated ✔";
+});
 </script>
 
 </body>
